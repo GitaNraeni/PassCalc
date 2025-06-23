@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PassCalcRbx</title>
+  <title>Kalkulator Robux</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .fade-in { animation: fadeIn 0.5s ease-in-out; }
@@ -26,7 +26,7 @@
   <!-- App -->
   <div id="mainApp" class="hidden space-y-6">
     <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-bold text-blue-400">PassCalcRbx</h2>
+      <span class="text-blue-400 font-bold text-xl cursor-pointer hover:text-blue-600 transition" onclick="showInfo()">PassCalcRbx</span>
       <button onclick="showNameOptions()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg font-bold transition" id="displayName"></button>
     </div>
 
@@ -54,7 +54,7 @@
 </main>
 
 <footer class="text-center text-xs text-gray-500 py-3">
-  &copy; 2025 PassCalcRbx • <a href="privacy.html" class="text-blue-400 underline hover:text-blue-600">Privacy Policy</a>
+  &copy; 2025 Kalkulator Robux • <a href="privacy.html" class="text-blue-400 underline hover:text-blue-600">Privacy Policy</a>
 </footer>
 
 <div id="notif" class="hidden fixed top-4 right-4 bg-blue-600 text-white font-bold px-4 py-2 rounded shadow-lg fade-in z-50"></div>
@@ -71,6 +71,21 @@
         <button onclick="confirmChangeName()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded">Simpan</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Info Modal -->
+<div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+  <div class="backdrop-blur p-6 rounded-xl shadow-lg w-full max-w-sm box-hover">
+    <h3 class="text-lg font-bold mb-3">Tentang Website</h3>
+    <p class="text-sm text-gray-300 mb-4">
+      Website ini dibuat untuk mempermudah kalian menghitung harga Game Pass Roblox. 
+      Dengan website ini, kalian bisa tahu berapa harga Game Pass yang harus kalian atur 
+      supaya Robux yang kalian terima sesuai dengan target, meskipun sudah dipotong 30% biaya oleh Roblox. 
+      Kalian tinggal masukkan angka Robux yang ingin didapat, dan website otomatis kasih tahu harga Game Pass yang harus dibuat. 
+      Jadi kalian nggak perlu hitung manual atau takut salah hitung. Semua praktis dan cepat!
+    </p>
+    <button onclick="closeInfo()" class="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded">Tutup</button>
   </div>
 </div>
 
@@ -136,10 +151,19 @@ function logoutUser() {
   setTimeout(() => location.reload(), 1500);
 }
 
+function showInfo() {
+  document.getElementById('infoModal').classList.remove('hidden');
+}
+
+function closeInfo() {
+  document.getElementById('infoModal').classList.add('hidden');
+}
+
 window.onload = function() {
   const name = sessionStorage.getItem("username");
   if (name) showMain(name);
 }
 </script>
+
 </body>
 </html>
