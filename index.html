@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PassCalc</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(-10px);} to {opacity:1; transform: translateY(0);} }
+    .backdrop-blur { backdrop-filter: blur(8px); background-color: rgba(30, 41, 59, 0.5); }
+    .box-hover:hover { transform: scale(1.02); transition: transform 0.2s ease-in-out; }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col">
+
+<main class="flex-grow p-4 max-w-2xl mx-auto space-y-6">
+
+  <!-- Login -->
+  <div id="loginBox" class="backdrop-blur p-6 rounded-xl shadow-lg fade-in box-hover">
+    <h1 class="text-2xl font-bold text-blue-400 mb-4">Masukkan Nama Kamu</h1>
+    <input id="usernameInput" type="text" placeholder="Nama kamu" class="w-full mb-3 px-3 py-2 rounded-lg bg-black border border-blue-500 text-white" onkeydown="if(event.key==='Enter') loginUser()" />
+    <button onclick="loginUser()" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-2 rounded-lg transition">Masuk</button>
+  </div>
+
+  <!-- App -->
+  <div id="mainApp" class="hidden space-y-6">
+    <div class="flex justify-between items-center">
+      <h2 class="text-2xl font-bold text-blue-400">PassCalc</h2>
+      <button onclick="showNameOptions()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg font-bold transition" id="displayName"></button>
+    </div>
+
+    <!-- Kalkulator -->
+    <div class="backdrop-blur p-6 rounded-xl shadow-lg fade-in box-hover">
+      <div class="flex mb-3 space-x-2">
+        <input id="robuxWanted" type="number" placeholder="Robux yang diinginkan" class="w-full px-3 py-2 rounded-lg bg-black border border-blue-500 text-white" onkeydown="if(event.key==='Enter') hitungHarga()" />
+        <button onclick="hitungHarga()" class="bg-blue-600 hover:bg-blue-700 px-3 rounded-lg font-bold transition">Hitung</button>
+        <button onclick="resetCalc()" class="bg-gray-600 hover:bg-gray-700 px-3 rounded-lg font-bold transition">Reset</button>
+      </div>
+      <p id="result" class="text-blue-400 font-semibold"></p>
+    </div>
+
+    <!-- Tutorial -->
+    <div class="backdrop-blur p-6 rounded-xl shadow-lg fade-in box-hover">
+      <h3 class="text-xl font-bold text-blue-400 mb-2">Tutorial Membuat Game Pass</h3>
+      <ol class="list-decimal list-inside text-sm space-y-2 text-gray-300">
+        <li>Buka <a href="https://create.roblox.com" target="_blank" class="text-blue-400 underline hover:text-blue-600 transition">create.roblox.com</a>.</li>
+        <li>Pilih game kamu → Associated Items → Game Passes → Create Pass.</li>
+        <li>Upload gambar, isi nama & deskripsi.</li>
+        <li>Configure → Sales → aktifkan Item for Sale → isi harga kalkulator → matikan Regional Pricing → Save.</li>
+      </ol>
+    </div>
+  </div>
+</main>
+
+<footer class="text-center text-xs text-gray-500 py-3">
+  &copy; 2025 PassCalc • <a href="privacy.html" class="text-blue-400 underline hover:text-blue-600">Privacy Policy</a>
+</footer>
+
+<div id="notif" class="hidden fixed top-4 right-4 bg-blue-600 text-white font-bold px-4 py-2 rounded shadow-lg fade-in z-50"></div>
+
+<!-- Ganti/Hapus nama -->
+<div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+  <div class="backdrop-blur p-6 rounded-xl shadow-lg w-full max-w-sm box-hover">
+    <h3 class="text-lg font-bold mb-3">Pengaturan Nama</h3>
+    <input id="newNameInput" type="text" placeholder="Nama baru" class="w-full mb-3 px-3 py-2 rounded-lg bg-black border border-blue-500 text-white" />
+    <div class="flex justify-between">
+      <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Hapus Nama</button>
+      <div class="space-x-2">
+        <button onclick="closeNameModal()" class="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded">Batal</button>
+        <button onclick="confirmChangeName()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function loginUser() {
+  const input = document.getElementById('usernameInput').value.trim();
+  if (!input) return;
+  sessionStorage.setItem("username", input);
+  showMain(input);
+  showNotif(`🎉 Selamat datang, ${input}!`);
+}
+
+function showMain(name) {
+  document.getElementById('displayName').innerText = name;
+  document.getElementById('loginBox').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+}
+
+function hitungHarga() {
+  const robux = parseFloat(document.getElementById('robuxWanted').value);
+  const result = document.getElementById('result');
+  if (isNaN(robux) || robux <= 0) {
+    result.innerText = "Masukkan angka Robux valid.";
+    return;
+  }
+  const harga = Math.ceil(robux / 0.7);
+  result.innerHTML = `Atur harga Game Pass: ${harga} Robux`;
+}
+
+function resetCalc() {
+  document.getElementById('robuxWanted').value = '';
+  document.getElementById('result').innerText = '';
+}
+
+function showNotif(msg) {
+  const notif = document.getElementById('notif');
+  notif.innerText = msg;
+  notif.classList.remove('hidden');
+  setTimeout(() => notif.classList.add('hidden'), 3000);
+}
+
+function showNameOptions() {
+  document.getElementById('nameModal').classList.remove('hidden');
+}
+
+function closeNameModal() {
+  document.getElementById('nameModal').classList.add('hidden');
+}
+
+function confirmChangeName() {
+  const newName = document.getElementById('newNameInput').value.trim();
+  if (newName) {
+    sessionStorage.setItem("username", newName);
+    document.getElementById('displayName').innerText = newName;
+    showNotif(`✅ Nama diubah jadi ${newName}`);
+  }
+  closeNameModal();
+}
+
+function logoutUser() {
+  sessionStorage.removeItem("username");
+  showNotif(`🚀 Nama dihapus, kembali ke login.`);
+  setTimeout(() => location.reload(), 1500);
+}
+
+window.onload = function() {
+  const name = sessionStorage.getItem("username");
+  if (name) showMain(name);
+}
+</script>
+</body>
+</html>
